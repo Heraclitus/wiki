@@ -1,0 +1,5 @@
+ https://github.com/argoproj/argo/blob/master/README.md
+ 
+ https://github.com/bloomberg/airflow/tree/airflow-kubernetes-executor
+ 
+ https://github.com/Azure/brigade
