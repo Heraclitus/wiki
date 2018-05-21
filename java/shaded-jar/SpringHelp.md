@@ -3,8 +3,8 @@ means that any files in respective jars, having the same name will overwrite. Th
 
 See the transformer example for spring here
 https://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transformers.html
-{code}
-<transformers>
+```
+                          <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
                                     <resource>META-INF/spring.handlers</resource>
                                 </transformer>
@@ -18,5 +18,5 @@ https://maven.apache.org/plugins/maven-shade-plugin/examples/resource-transforme
                                         <Build-Number>1</Build-Number>
                                     </manifestEntries>
                                 </transformer>
-                            </transformers>
-                            {code}
+                          </transformers>
+ ```
