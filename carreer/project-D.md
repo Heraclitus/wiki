@@ -1,3 +1,12 @@
+# Cast
+* Senior Eng
+* Principle Eng - AS
+* Software Manager - CF
+* Product Manager - SG
+* Program Manager - DF
+* Director - BS
+* SVP - MH
+
 # The begining 2016
 * Jan 15 - Grappled with Paul's Spec, began to lay an abstract plan
 * Jul  7 - Marshaling/Unmarshaling  
