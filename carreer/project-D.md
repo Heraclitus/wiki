@@ -1,5 +1,7 @@
 # Cast
-* Senior Eng
+* Eng - ML,DH,KM,TE
+* QA Eng - LK,KL,SH
+* Senior Eng - TH,TS
 * Principle Eng - AS
 * Software Manager - CF
 * Product Manager - SG
