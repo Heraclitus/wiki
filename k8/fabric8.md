@@ -31,6 +31,19 @@ spec:
               - key: env-properties
                 path: env.properties
 ```
+and the configmap 
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lab-aor-config-volume
+  namespace: yourns
+  labels:
+data: 
+  service-properties: |
+    service.cool.prop=yoo    
+    service.cool.encryptedPassword=UeWMUMOJmFXMTHNg==
+```
 Turns into...
 ```java
         final PodSpecFluent.ContainersNested<PodFluent.SpecNested<PodBuilder>> containerSpec = new PodBuilder()
