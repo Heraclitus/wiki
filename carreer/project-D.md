@@ -24,8 +24,9 @@
 * Aug 28 - Customer expiramentation
 
 # 1st Actual Production Customer - 2018
-* Feb  8 - Custom deep dives
+* Feb  8 - Customer deep dives
 * Mar 14 - 9am 1st customer goes live
+* Jun  8 - Admission from Program Manager that we won't meet Q2 customer goal
 
 
 
