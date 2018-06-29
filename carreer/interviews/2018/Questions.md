@@ -1,13 +1,13 @@
 Dallas @ Hulu asked me... to write method for index of globbed string in input string.
 
-<code>
+```
 
 import java.io.*;
 import java.util.*;
 
 class Solution {
   public static void main(String[] args) {
-   
+  
     //System.out.println(indexOf("fo*", "foo"));
     //System.out.println(indexOf("*fo*", "foo"));
     System.out.println(indexOf("*si*p", "mississipi"));
@@ -36,6 +36,7 @@ class Solution {
     }
      return indexOfGlob;
   }
+```
   
 // a stab at recursive  
   // terminal cases
