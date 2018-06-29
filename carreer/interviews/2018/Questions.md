@@ -50,3 +50,21 @@ class Solution {
 
 }
 </code>
+
+Nick @ isplanet 
+
+Channels array passed into a loadAgents method, your goal is to distribute channels to agents. You have methods like agent add and leave that require redistribution. the channels are distributed across 4 agents like this 25,25,24,24 (total 98). 
+
+
+? @ isplanet
+write a method that accepts an array of strings and finds the most powerful based on some other definition you get to pick
+
+```
+
+// return position of most powerful 
+int findHighestPower(String[] s, YOUR-CHOICE-
+{
+
+}
+
+```
