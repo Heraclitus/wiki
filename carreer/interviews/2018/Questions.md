@@ -36,7 +36,7 @@ class Solution {
     }
      return indexOfGlob;
   }
-```
+
   
 // a stab at recursive  
   // terminal cases
@@ -50,7 +50,7 @@ class Solution {
   //      match 
 
 }
-</code>
+```
 
 Nick @ isplanet 
 
