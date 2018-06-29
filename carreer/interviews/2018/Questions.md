@@ -1,6 +1,7 @@
 Dallas @ Hulu asked me... to write method for index of globbed string in input string.
 
-'''
+<code>
+
 import java.io.*;
 import java.util.*;
 
@@ -48,4 +49,4 @@ class Solution {
   //      match 
 
 }
-```
+</code>
