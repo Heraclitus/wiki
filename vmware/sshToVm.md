@@ -7,3 +7,4 @@ C:\ProgramData\VMware\vmnetnat.conf
 22 = 192.168.153.128:22
 
 ```
+The internal VM is 192.168.153.128, this conf says connect host port 22 to vm-guest port 22
