@@ -1,0 +1,1 @@
+https://www.quora.com/How-are-Akka-actors-different-from-Go-channels-How-are-two-related-to-each-other/answer/Rick-Beton?share=6cb2c1f4&srid=RkV1
