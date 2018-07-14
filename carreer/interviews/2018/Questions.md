@@ -69,3 +69,5 @@ int findHighestPower(String[] s, YOUR-CHOICE-
 }
 
 ```
+
+? at Xevo asked for implementation of method that asks for the item in an array of ints that is less then an int argument in linear time. The question then mutates into finding the n-th lowest value less then the argument. This requires a data structure at least n long to place values less then the into value. 
