@@ -6,7 +6,7 @@ __FALSE ASSUMPTION:__ 1 client TCP connection will only ever result in 1 TCP con
 
 This assumption leads us to believe that the following happens...
 
-
+![Mistaken Connection Behavior](./mistaken.png)
 
 
 
