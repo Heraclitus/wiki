@@ -15,7 +15,7 @@ This assumption leads us to believe that the following happens...
 API Gateway doesn't garantee that it's internal operation will consistently link the long-lived client connection with the same long-lived backend connection to the NLB. As a result you can see several NLB "flow" counts for a single repeating client using long-lived HTTP connections.
 
 __NOTE__ the diagram suggests that each request results in a distinct connection on it's "backend" that is a simplification for diagraming and explaining. In actual fact you may or may not get a pre-existing connection. 
-![Actual Connection Behavior](./actual)
+![Actual Connection Behavior](./actual.png)
 
 
 
