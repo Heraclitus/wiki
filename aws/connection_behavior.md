@@ -1,4 +1,7 @@
-# System wide TCP Connection Behavior
+# AWS - System wide TCP Connection Behavior
+
+# Customer Trends
+Peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. 
 
 ## Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
