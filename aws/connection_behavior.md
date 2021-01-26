@@ -6,21 +6,29 @@ Over time we observed tremendous spikes in TCP connections that would often crip
 # High Level Architecture
 
 ```
-|---------------------| |-----------| |------|  |---|  |---------------|
-|Customer-REST-Client => CloudFront => API-GW => NLB => EC2-TargetGroup
-|---------------------| |-----------| |------|  |---|  |---------------|
+|---------------------| |-----------| |------|  |---|  |---------------|  |---------|
+|Customer-REST-Client => CloudFront => API-GW => NLB => EC2-TargetGroup => RDS-MYSQL
+|---------------------| |-----------| |------|  |---|  |---------------|  |---------|
 ```
 Each EC2 instance had the following ...
 ```
- Traffic Port - Port 80     => L4 Connection queue (Golang) => NGINX(port8080) => NODEJS-APP
- Alive-Check  - Port 8080   => NGINX ......................................... => NODEJS-APP
+ |-------------------------|  |----------------------------|  |---------------|  |----------|  |--------|
+ Port 80 (Traffic Port)     => L4 Connection queue (Golang) => NGINX(port8080) => NODEJS-APP => RDS-MYSQL
+ |--------------------------| |----------------------------|  |---------------|  |----------|  |--------|
+ |--------------------------| |-----------------------------------------------|  |----------|
+ Port 8080 (Alive-Check)    => NGINX ......................................... => NODEJS-APP
+ |--------------------------| |-----------------------------------------------|  |----------|
 ```
+## Configuration
 The L4 connection queue had a limit of 15 active TCP connections it allowed to send/rcv packets on. Any additional TCP connection request would be accepted but placed on a queue and no read/write was done on those queued connections. 
 
 our NGINX configuration has a default 75 second http keepalive setting and default keepalive_requests of 100
 
-# Customer Trends
+## Customer Trends
 Peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. 
+
+# Troubleshooting process
+Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? Time and time again the answer was no. 
 
 # Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
