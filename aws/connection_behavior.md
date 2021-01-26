@@ -28,7 +28,7 @@ our NGINX configuration has a default 75 second http keepalive setting and defau
 Peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. 
 
 # Troubleshooting process
-Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? Time and time again the answer was no. 
+Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? Time and time again the answer was no. We'd look at CloudFront request metrics for the spike period and see nothing that would account for that large of spike. ![NotFrontEnd](./NoSpikeInFrontEnd.jpg)
 
 # Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
