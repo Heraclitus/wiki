@@ -1,12 +1,28 @@
 # AWS - System wide TCP Connection Behavior
 
-# Customer Trends
-Peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. 
-
 # Problem Statement
 Over time we observed tremendous spikes in TCP connections that would often cripple the system. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like  ![SpikeExample](./ConnectionSpikeExample.jpg)
 
-## Mistaken Understanding
+# High Level Architecture
+
+```
+|---------------------| |-----------| |------|  |---|  |---------------|
+|Customer-REST-Client => CloudFront => API-GW => NLB => EC2-TargetGroup
+|---------------------| |-----------| |------|  |---|  |---------------|
+```
+Each EC2 instance had the following ...
+```
+ Traffic Port - Port 80     => L4 Connection queue (Golang) => NGINX(port8080) => NODEJS-APP
+ Alive-Check  - Port 8080   => NGINX ......................................... => NODEJS-APP
+```
+The L4 connection queue had a limit of 15 active TCP connections it allowed to send/rcv packets on. Any additional TCP connection request would be accepted but placed on a queue and no read/write was done on those queued connections. 
+
+our NGINX configuration has a default 75 second http keepalive setting and default keepalive_requests of 100
+
+# Customer Trends
+Peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. 
+
+# Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
 
 __FALSE ASSUMPTION:__ 1 client TCP connection will only ever result in 1 TCP conneciton at all levels of the pipeline
