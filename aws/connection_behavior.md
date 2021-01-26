@@ -1,7 +1,7 @@
 # AWS - System wide TCP Connection Behavior
 
 # Problem Statement
-Over time we observed tremendous spikes in TCP connections that would often cripple the system. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like <img src="https://github.com/Heraclitus/wiki/blob/master/aws/ConnectionSpikeExample.jpg" height="200"/>
+Over time we observed tremendous spikes in TCP connections that would often cripple the system. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like <img src="https://github.com/Heraclitus/wiki/blob/master/aws/ConnectionSpikeExample.jpg" height="400"/>
 
 # High Level Architecture
 
@@ -28,7 +28,7 @@ our NGINX configuration has a default 75 second http keepalive setting and defau
 Peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. 
 
 # Troubleshooting process
-Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? Time and time again the answer was no. We'd look at CloudFront request metrics for the spike period and see nothing that would account for that large of spike. ![NotFrontEnd](./NoSpikeInFrontEnd.jpg)
+Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? Time and time again the answer was no. We'd look at CloudFront request metrics for the spike period and see nothing that would account for that large of spike. <img src="https://github.com/Heraclitus/wiki/blob/master/aws/NoSpikeInFrontEnd.jpg" height="400"/>
 
 # Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
@@ -36,8 +36,7 @@ The following sequence diagram shows the basic architecture that was tested.
 __FALSE ASSUMPTION:__ 1 client TCP connection will only ever result in 1 TCP conneciton at all levels of the pipeline
 
 This assumption leads us to believe that the following happens...
-
-![Mistaken Connection Behavior](./mistaken.png)
+<img src="https://github.com/Heraclitus/wiki/blob/master/aws/mistaken.png" height="400"/>
 
 
 ## Actual Behavior
