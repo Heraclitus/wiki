@@ -1,7 +1,7 @@
 # AWS - System wide TCP Connection Behavior
 
 # Problem Statement
-Over time we observed tremendous spikes in TCP connections that would often cripple the system. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like  ![SpikeExample](./ConnectionSpikeExample.jpg)
+Over time we observed tremendous spikes in TCP connections that would often cripple the system. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like <img src="https://github.com/Heraclitus/wiki/blob/master/aws/ConnectionSpikeExample.jpg" height="200"/>
 
 # High Level Architecture
 
