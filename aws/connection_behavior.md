@@ -3,6 +3,9 @@
 # Customer Trends
 Peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. 
 
+# Problem Statement
+Over time we observed tremendous spikes in TCP connections that would often cripple the system. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like  ![SpikeExample](./ConnectionSpikeExample.jpg)
+
 ## Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
 
