@@ -35,7 +35,8 @@ Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we
 Below you can see that request count measured at CloudFront is relatively stable the two primary CloudFront distributions that clients use (Mobile + Embedded). It actually dips down during the spike and recovers higher afterwards. <img src="https://github.com/Heraclitus/wiki/blob/master/aws/NoSpikeInFrontEnd.jpg" height="400"/>
 So a spike due to incomming traffic was **NOT** the cause.
 
-On the RDS side, we did see similiar looking events when we introduced load into the db for say cleanup. However, for this particular spike there was no easily descernable load increase on the RDS instance.
+Lets take a look at the RDS side of things for the same time period. We do see momentary spike in CPU that seems to suggest that possibly the spike might just be caused by DB load?  
+<img src="https://github.com/Heraclitus/wiki/blob/master/aws/DBGraph.jpg" height="400"/>
 
 # Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
