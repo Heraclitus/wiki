@@ -30,7 +30,12 @@ The L4 connection queue had a limit of 15 active TCP connections it allowed to s
 our NGINX configuration has a default 75 second http keepalive setting and default keepalive_requests of 100
 
 # Troubleshooting process
-Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? Time and time again the answer was no. We'd look at CloudFront request metrics for the spike period and see nothing that would account for that large of spike. <img src="https://github.com/Heraclitus/wiki/blob/master/aws/NoSpikeInFrontEnd.jpg" height="400"/>
+Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? Time and time again the answer was no. We'd look at CloudFront request metrics for the spike period and see nothing that would account for that large of spike. 
+
+Below you can see that request count measured at CloudFront is relatively stable the two primary CloudFront distributions that clients use (Mobile + Embedded). It actually dips down during the spike and recovers higher afterwards. <img src="https://github.com/Heraclitus/wiki/blob/master/aws/NoSpikeInFrontEnd.jpg" height="400"/>
+So a spike due to incomming traffic was **NOT** the cause.
+
+On the RDS side, we did see similiar looking events when we introduced load into the db for say cleanup. However, for this particular spike there was no easily descernable load increase on the RDS instance.
 
 # Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
