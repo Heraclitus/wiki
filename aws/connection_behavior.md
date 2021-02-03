@@ -1,5 +1,10 @@
 # AWS - System wide TCP Connection Behavior
 
+# System Story
+Our system is serving millions of clients on the public internet on a mixture of platforms including IPhone, Android and embedded devices. These clients call into our AWS backend architecture for serving of REST API calls. Our client trend peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. Noon is high water mark and midnight is our low. 
+
+It's been observed that days can go by without witnessing any significant failure events. However, a mysterios event does occur with frequence of two to three times a week that causes 5xx increases into double digit traffic %. 
+
 # Problem Statement
 Over time we observed tremendous spikes in TCP connections that would often cripple the system. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like <img src="https://github.com/Heraclitus/wiki/blob/master/aws/ConnectionSpikeExample.jpg" height="400"/>
 
@@ -23,9 +28,6 @@ Each EC2 instance had the following ...
 The L4 connection queue had a limit of 15 active TCP connections it allowed to send/rcv packets on. Any additional TCP connection request would be accepted but placed on a queue and no read/write was done on those queued connections. 
 
 our NGINX configuration has a default 75 second http keepalive setting and default keepalive_requests of 100
-
-## Customer Trends
-Peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. 
 
 # Troubleshooting process
 Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? Time and time again the answer was no. We'd look at CloudFront request metrics for the spike period and see nothing that would account for that large of spike. <img src="https://github.com/Heraclitus/wiki/blob/master/aws/NoSpikeInFrontEnd.jpg" height="400"/>
