@@ -4,7 +4,7 @@
 Our system is serving millions of clients on the public internet on a mixture of platforms including IPhone, Android and embedded devices. These clients call into our AWS backend architecture for serving of REST API calls. Our client trend peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. Noon is high water mark and midnight is our low. 
 
 ## Problem Details
-We started experienceing massive failure rates. Days would go by without witnessing any significant failures and other days we'd see two or three failure events. Our typically response was to throttle traffic (causing 429 errors) until our internal request pipeline cleared out it's backlogs and then we would ease back off the throttling until we reached a steady state. These recovery actions would take 20-50 mins. Sometimes we'd have to dial the throttling back down because the system would get backed again. We observed tremendous spikes in TCP connections, system latency would increase. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like <img src="https://github.com/Heraclitus/wiki/blob/master/aws/ConnectionSpikeExample.jpg" height="400"/>
+We started experienceing massive failure rates. Days would go by without witnessing any significant failures and other days we'd see two or three failure events. Our typically response was to throttle traffic (causing 429 errors) until our internal request pipeline cleared out it's backlogs and then we would ease back off the throttling until we reached a steady state. These recovery actions would take 20-50 mins. Sometimes we'd have to dial the throttling back down because the system would get backed up again. We observed tremendous spikes in TCP connections and system latency would increase. Recovery throttling on the API-GW was down to sub-200 RPS settings. 
 
 # High Level Architecture
 
@@ -27,8 +27,10 @@ The L4 connection queue had a limit of 15 active TCP connections it allowed to s
 
 our NGINX configuration has a default 75 second http keepalive setting and default keepalive_requests of 100
 
+An example of the spikes as viewed from the NLB looks like <img src="https://github.com/Heraclitus/wiki/blob/master/aws/ConnectionSpikeExample.jpg" height="400"/>
+
 # Troubleshooting process
-Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? 
+Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? What about third-party APIs?
 
 in 29 days we counted 
 1. **33 events** w/associated RDS MySQL spikes & NLB spikes
@@ -54,7 +56,7 @@ Nope, statistical analysis of our thirdparty calls didn't explain the latencies 
 
 
 # Resolution?
-The resolution came with two key learnings. One was fixing our understanding of how long lived connections were working between API-GW and our Connection throttling software. The other was realizing a flaw in our approach to throttling upstream of the API-GW. Below I dig into each.
+The resolution came with two key learnings. One was fixing our understanding of how long lived connections were working between API-GW and our connection throttling software. The other was realizing a flaw in our approach to connection throttling upstream of the API-GW. Below I dig into each.
 
 ## Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
