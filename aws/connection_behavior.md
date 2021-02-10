@@ -1,4 +1,4 @@
-# AWS - System wide TCP Connection Behavior
+# My most Challenging Troubleshooting...
 
 # System Story
 Our system is serving millions of clients on the public internet on a mixture of platforms including IPhone, Android and embedded devices. These clients call into our AWS backend architecture for serving of REST API calls. Our client trend peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. Noon is high water mark and midnight is our low. 
@@ -28,7 +28,12 @@ The L4 connection queue had a limit of 15 active TCP connections it allowed to s
 our NGINX configuration has a default 75 second http keepalive setting and default keepalive_requests of 100
 
 # Troubleshooting process
-Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? Time and time again the answer was no. We'd look at CloudFront request metrics for the spike period and see nothing that would account for that large of spike. 
+Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? 
+
+in 29 days we counted 
+**33 events** w/associated RDS MySQL spikes & NLB spikes
+**8 events** w/out RDS MySQL spikes & NLB spikes
+**0 events** w/increased CloudFrount request count
 
 Below you can see that request count measured at CloudFront is relatively stable the two primary CloudFront distributions that clients use (Mobile + Embedded). It actually dips down during the spike and recovers higher afterwards. <img src="https://github.com/Heraclitus/wiki/blob/master/aws/NoSpikeInFrontEnd.jpg" height="400"/>
 So a spike due to incomming traffic was **NOT** the cause.
