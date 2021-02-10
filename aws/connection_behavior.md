@@ -31,17 +31,33 @@ our NGINX configuration has a default 75 second http keepalive setting and defau
 Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? 
 
 in 29 days we counted 
-**33 events** w/associated RDS MySQL spikes & NLB spikes
-**8 events** w/out RDS MySQL spikes & NLB spikes
-**0 events** w/increased CloudFrount request count
+1. **33 events** w/associated RDS MySQL spikes & NLB spikes
+1. **8 events** w/out RDS MySQL spikes & NLB spikes
+1. **0 events** w/increased CloudFrount request count
 
 Below you can see that request count measured at CloudFront is relatively stable the two primary CloudFront distributions that clients use (Mobile + Embedded). It actually dips down during the spike and recovers higher afterwards. <img src="https://github.com/Heraclitus/wiki/blob/master/aws/NoSpikeInFrontEnd.jpg" height="400"/>
+
 So a spike due to incomming traffic was **NOT** the cause.
 
-Lets take a look at the RDS side of things for the same time period. We do see momentary spike in CPU that seems to suggest that possibly the spike might just be caused by DB load?  
+An example of the DB spikes can be seen here.  
 <img src="https://github.com/Heraclitus/wiki/blob/master/aws/DBGraph.jpg" height="400"/>
 
-# Mistaken Understanding
+**How about third party calls?**
+Nope, statistical analysis of our thirdparty calls didn't explain the latencies and were not abnormally high.
+
+# Why so challenging?
+1. The granularity of many AWS metrics is 1 minute and that makes identifying leading indicators very difficult
+2. Complex system that allowed for lots of competing theories amongst collueges with strong opinions.
+2.1 We tried hard to blame the NLB :) 
+3. Slow pace of expiramentation. We lacked a proper performance testing environment that could simulate our expiraments.
+4. Our customers were very sensitive to change.
+5. RDS monitoring is minimal compared to what we eventually added (PMM - https://www.percona.com/software/database-tools/percona-monitoring-and-management)
+
+
+# Resolution?
+The resolution came with two key learnings. One was fixing our understanding of how long lived connections were working between API-GW and our Connection throttling software. The other was realizing a flaw in our approach to throttling upstream of the API-GW. Below I dig into each.
+
+## Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
 
 __FALSE ASSUMPTION:__ 1 client TCP connection will only ever result in 1 TCP conneciton at all levels of the pipeline
@@ -50,7 +66,7 @@ This assumption leads us to believe that the following happens...
 <img src="https://github.com/Heraclitus/wiki/blob/master/aws/mistaken.png" height="400"/>
 
 
-## Actual Behavior
+### Actual Behavior
 
 API Gateway doesn't garantee that it's internal operation will consistently link the long-lived client connection with the same long-lived backend connection to the NLB. As a result you can see several NLB "flow" counts for a single repeating client using long-lived HTTP connections.
 
@@ -60,10 +76,9 @@ __NOTE__ the diagram suggests that each request results in a distinct connection
 ![Video Of Connection Behavior](./connection-behavior.mp4)
 
 
+## Raw Diagrams
 
-# Raw Diagrams
-
-## Mistaken
+### Mistaken
 ```
 @startuml
 participant JMETER
@@ -111,7 +126,7 @@ JMETER <- APIGW
 @enduml
 ```
 
-## Actual
+### Actual
 ```
 @startuml
 participant JMETER
@@ -156,3 +171,15 @@ APIGW <- NLB
 JMETER <- APIGW
 @enduml
 ```
+
+## Flaw in Connection throttling
+At root the flow is asymetrical knowledge. One side you have API-GW holding many TCP connections. On the other you have these connection throttling instances on EC2 nodes designating certain connections as **golden** connections which have priority while other connections are queued.  One side knows something the other does not. API-GW can't effectively optimize which connections it sends requests on. 
+
+It's important to point out that the NLB really is quite simple in it's basic construction. From 
+
+
+# Links
+API-GW LongLivedConnections - https://forums.aws.amazon.com/thread.jspa?threadID=240690
+NLB Behavior - https://docs.aws.amazon.com/elasticloadbalancing/latest/userguide/how-elastic-load-balancing-works.html
+More NLB Behavior - https://www.1strategy.com/blog/2017/11/28/exploring-the-new-network-load-balancer-nlb/
+And More NLB stuff - https://stackoverflow.com/a/55798133/10808574, https://medium.com/tenable-techblog/lessons-from-aws-nlb-timeouts-5028a8f65dda, https://aws.amazon.com/premiumsupport/knowledge-center/elb-fix-unequal-traffic-routing/
