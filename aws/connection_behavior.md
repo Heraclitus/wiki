@@ -3,10 +3,8 @@
 # System Story
 Our system is serving millions of clients on the public internet on a mixture of platforms including IPhone, Android and embedded devices. These clients call into our AWS backend architecture for serving of REST API calls. Our client trend peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. Noon is high water mark and midnight is our low. 
 
-It's been observed that days can go by without witnessing any significant failure events. However, a mysterios event does occur with frequence of two to three times a week that causes 5xx increases into double digit traffic %. 
-
-# Problem Statement
-Over time we observed tremendous spikes in TCP connections that would often cripple the system. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like <img src="https://github.com/Heraclitus/wiki/blob/master/aws/ConnectionSpikeExample.jpg" height="400"/>
+## Problem Details
+We started experienceing massive failure rates. Days would go by without witnessing any significant failures and other days we'd see two or three failure events. Our typically response was to throttle traffic (causing 429 errors) until our internal request pipeline cleared out it's backlogs and then we would ease back off the throttling until we reached a steady state. These recovery actions would take 20-50 mins. Sometimes we'd have to dial the throttling back down because the system would get backed again. We observed tremendous spikes in TCP connections, system latency would increase. Recovery form these spikes would often require throttling the API-GW down to sub-200 RPS settings and easing back up to un-throttled position. An example of the spikes looks like <img src="https://github.com/Heraclitus/wiki/blob/master/aws/ConnectionSpikeExample.jpg" height="400"/>
 
 # High Level Architecture
 
