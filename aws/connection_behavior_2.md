@@ -24,7 +24,7 @@ Our application server is written in NodeJS and using Sequelize ORM library. Seq
 One theory was our "Lumpy request distribution" which resolving didn't end up fixing the issue.
 
 ## Maximum Prepared Statement Count
-In an attempt to reduce spikes in the DB connections tried lifting the Sequelize-pool min connection to nearly match the max value. We caused an outage because of our DB's max prepared connection count being breached.  **Why?**
+In an attempt to reduce spikes in the DB connections we tried lifting the Sequelize-pool min connection to nearly match it's max value. We caused an outage because of our DB's max prepared connection count being breached.  **Why?**
 It turns out that Sequelize depends on mysql2 library. That library constructs an LRU cache per connection with 16K max prepared statments. Since each NodeJS instance was allowed 20 connections max, 17 min our connections were kept open longer and prepared statements are kept open for the lifetime of those connections. So the breaching on the DB side was inevitable.  
 
 During investigation we discovered some queries that had broken parameterization and created a cardinality explosion of prepared statements. This also contributed to reaching the DB maximum constraint. 
