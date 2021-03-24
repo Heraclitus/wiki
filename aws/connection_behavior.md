@@ -1,4 +1,4 @@
-# The puzzling and herculean troubleshooting of a complex system
+# Chapter 1: The puzzling and herculean troubleshooting of a complex system
 This is the opening chapter in a saga on a multi-month problem that I was involved in for a large customer using our AWS cloud hosted services. See the second chapter to see how we turned a corner. 
 
 # System Story
