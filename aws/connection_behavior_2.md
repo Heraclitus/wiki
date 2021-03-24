@@ -14,6 +14,7 @@ After upgrading to 8.0 we never had to throttle down and back up. **Did we solve
 2. Attempt to fix the first problem, lead to maxing out our DB's maximum prepared statement count **(NEW)**
 3. A bug with prepared statement is found! **(NEW)**
 4. Very lumpy request distribution **(OLD)**
+5. To many DB calls **(OLD)**
 
 
 ## Frequent DB Connection Spikes
