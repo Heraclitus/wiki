@@ -10,9 +10,10 @@ We lived with these events, sometimes multiple times a day. This system had an o
 After upgrading to 8.0 we never had to throttle down and back up. **Did we solve the problem?** Well in a sense it solved the major issue for the client. We no longer failed our SLA's for error rate. But the story doesn't end here.
 
 # New problems, Old problems ...
-1. Fequent DB connection spikes (NEW) 
-2. Attempt to fix the first problem, lead to maxing out our DB's maximum prepared statement count
-3. Very lumpy request distribution (OLD) 
+1. Fequent DB connection spikes **(NEW)**
+2. Attempt to fix the first problem, lead to maxing out our DB's maximum prepared statement count **(NEW)**
+3. A bug with prepared statement is found! **(NEW)**
+4. Very lumpy request distribution **(OLD)**
 
 
 ## Frequent DB Connection Spikes
@@ -25,14 +26,26 @@ One theory was our "Lumpy request distribution" which resolving didn't end up fi
 In an attempt to reduce spikes in the DB connections tried lifting the Sequelize-pool min connection to nearly match the max value. We caused an outage because of our DB's max prepared connection count being breached.  **Why?**
 It turns out that Sequelize depends on mysql2 library. That library constructs an LRU cache per connection with 16K max prepared statments. Since each NodeJS instance was allowed 20 connections max, 17 min our connections were kept open longer and prepared statements are kept open for the lifetime of those connections. So the breaching on the DB side was inevitable.  
 
-During investigation we discovered some queries that had broken parameterization and created a cardinality explosion of prepared statements. This also contributed to reaching the DB maximum. 
+During investigation we discovered some queries that had broken parameterization and created a cardinality explosion of prepared statements. This also contributed to reaching the DB maximum constraint. 
 
 ## Very lumpy request distribution
 <img src="https://github.com/Heraclitus/wiki/blob/master/aws/lumpy-nlb.jpg" height="200"/>
 AWS is very clear that you should expect uneven distributions if you are using longlived connections https://aws.amazon.com/premiumsupport/knowledge-center/elb-fix-unequal-traffic-routing/
-<img src="https://github.com/Heraclitus/wiki/blob/master/aws/aws-lb-lumpy.png" height="200"/>
+<img src="https://github.com/Heraclitus/wiki/blob/master/aws/aws-lb-lumpy.png" height="100"/>
 We swapped out the NLB for an ALB and had a drammatic improvement in distribution of requests per node. This had the benifit of reducing latency avg by about 10%. Our connection spikes did not change. 
 
+# So know what???
+At this point in the story we have...
+1. A happier customer, no more 5xx.
+2. High AWS costs $$$ due to our attempts to out-scale the problems
+4. Better DB behavior
+5. New problems that were probably contributing to the outages prior to the DB upgrade.
 
+The story isn't over. We still need to 
+1. Fix our broken prepared statements
+2. Figure out how to size the connection/prepared-statement/db-max-prepared-statement limits without causing outages
+3. Reduce the fleet costs without causing 5xx
+4. Reduce the App's reliance on the DB with caching strategies using Redis cache
+5. Avoid overwhelming the Redis cache and causing 5xx
 
 
