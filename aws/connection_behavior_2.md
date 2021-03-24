@@ -10,8 +10,9 @@ We lived with these events, sometimes multiple times a day. This system had an o
 After upgrading to 8.0 we never had to throttle down and back up. **Did we solve the problem?** Well in a sense it solved the major issue for the client. We no longer failed our SLA's for error rate. But the story doesn't end here.
 
 # New problems, Old problems ...
-1. Fequent DB connection spikes (NEW)
-2. Very lumpy request distribution (OLD)
+1. Fequent DB connection spikes (NEW) <img src="https://github.com/Heraclitus/wiki/blob/master/aws/frequent-db-connection-spikes.jpg" height="400"/>
+3. Very lumpy request distribution (OLD) <img src="https://github.com/Heraclitus/wiki/blob/master/aws/lumpy-nlb.jpg" height="400"/>
 
-# Frequent DB Connections Spikes
-<img src="https://github.com/Heraclitus/wiki/blob/master/aws/frequent-db-connection-spikes.jpg" height="400"/>
+
+
+
