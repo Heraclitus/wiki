@@ -196,7 +196,7 @@ NLB is basically a hashed-ledger table to descide how to route packets
 2. We worked to get our performance environment setup
 3. We stopped making random guesses about production
 
-Read on to see how things progressed. 
+[Read on](./connection_behavior_2.md) to see how things progressed. 
 
 # Links
 1. API-GW LongLivedConnections - https://forums.aws.amazon.com/thread.jspa?threadID=240690
