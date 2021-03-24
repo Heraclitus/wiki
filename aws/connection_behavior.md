@@ -1,10 +1,11 @@
-# My most challenging troubleshooting month ...
+# The puzzling and herculean troubleshooting of a complex system
+This is the opening chapter in a saga on a multi-month problem that I was involved in for a large customer using our AWS cloud hosted services. See the second chapter to see how we turned a corner. 
 
 # System Story
 Our system is serving millions of clients on the public internet on a mixture of platforms including IPhone, Android and embedded devices. These clients call into our AWS backend architecture for serving of REST API calls. Our client trend peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. Noon is high water mark and midnight is our low. 
 
-## Problem Details
-We started experienceing massive failure rates. Days would go by without witnessing any significant failures and other days we'd see two or three failure events. Our typically response was to throttle traffic (causing 429 errors) until our internal request pipeline cleared out it's backlogs and then we would ease back off the throttling until we reached a steady state. These recovery actions would take 20-50 mins. Sometimes we'd have to dial the throttling back down because the system would get backed up again. We observed tremendous spikes in TCP connections and system latency would increase. Recovery throttling on the API-GW was down to sub-200 RPS settings. 
+## Problem Landscape
+We started experienceing massive failure rates (HTTP 5xx status codes). Days would go by without witnessing any significant failures and other days we'd see two or three failure events. Our typical response during an outage was to throttle traffic (causing 429 errors) until our internal request pipeline cleared out it's backlogs and then we would ease back off the throttling until we reached a steady state. These recovery actions would take 20-50 mins. Sometimes we'd have to dial the throttling back down because the system would get backed up again. We observed tremendous spikes in TCP connections and system latency would increase. Recovery throttling on the API-GW was down to as low as 50 RPS throttling. 
 
 # High Level Architecture
 
@@ -56,7 +57,9 @@ Nope, statistical analysis of our thirdparty calls didn't explain the latencies 
 
 
 # Resolution?
-The resolution came with two key learnings. One was fixing our understanding of how long lived connections were working between API-GW and our connection throttling software. The other was realizing a flaw in our approach to connection throttling upstream of the API-GW. Below I dig into each.
+Not in this chapter. We did gane some important insights.
+
+Two key learnings. One was fixing our understanding of how long lived connections were working between API-GW and our connection throttling software. The other was realizing a flaw in our approach to connection throttling upstream of the API-GW. Below I dig into each.
 
 ## Mistaken Understanding
 The following sequence diagram shows the basic architecture that was tested. 
@@ -188,6 +191,12 @@ NLB is basically a hashed-ledger table to descide how to route packets
 
 <table class="wrapped relative-table confluenceTable" data-resize-percent="77.20651242502143"><colgroup><col style="width: 8.66667%;" data-resize-pixel="78" data-resize-percent="8.666666666666668" data-offset-left="40" data-offset-right="118" /><col style="width: 12.5556%;" data-resize-pixel="113" data-resize-percent="12.555555555555555" data-offset-left="118" data-offset-right="231" /><col style="width: 15.8889%;" data-resize-pixel="143" data-resize-percent="15.88888888888889" data-offset-left="231" data-offset-right="374" /><col style="width: 19.5556%;" data-resize-pixel="176" data-resize-percent="19.555555555555557" data-offset-left="374" data-offset-right="550" /><col style="width: 12.4444%;" data-resize-pixel="112" data-resize-percent="12.444444444444445" data-offset-left="550" data-offset-right="662" /><col style="width: 14.3333%;" data-resize-pixel="129" data-resize-percent="14.333333333333334" data-offset-left="662" data-offset-right="791" /><col style="width: 16.5556%;" data-resize-pixel="149" data-resize-percent="16.555555555555557" data-offset-left="791" data-offset-right="940" /></colgroup><tbody><tr><th class="confluenceTh" colspan="1">NLB HashKey</th><th class="confluenceTh">SRC IP: Port</th><th class="confluenceTh" colspan="1">NLB CLIENT SIDE IP:PORT</th><th class="confluenceTh">EC2 DST IP :Port</th><th class="confluenceTh" colspan="1">NOT IN TABLE-&gt;</th><th class="confluenceTh" colspan="1">Connection Throttle</th><th class="confluenceTh" colspan="1">CHANGE</th></tr><tr><td class="confluenceTd" colspan="1">A</td><td class="highlight-#57d9a3 confluenceTd" title="Background colour : Medium green 65%" data-highlight-colour="#57d9a3">1.1.1.1 :80</td><td class="highlight-#57d9a3 confluenceTd" title="Background colour : Medium green 65%" colspan="1" data-highlight-colour="#57d9a3">4.3.3.3 :222</td><td class="confluenceTd">2.2.2.2 :89</td><th class="confluenceTh" colspan="1"><br /></th><td class="confluenceTd" colspan="1">HAS RUN SLOT</td><td class="confluenceTd" colspan="1">WAS 80% of traffic</td></tr><tr><td class="confluenceTd" colspan="1">B</td><td class="highlight-#57d9a3 confluenceTd" title="Background colour : Medium green 65%" data-highlight-colour="#57d9a3">1.2.1.1 :1000</td><td class="highlight-#57d9a3 confluenceTd" title="Background colour : Medium green 65%" colspan="1" data-highlight-colour="#57d9a3">4.3.3.5 :322</td><td class="confluenceTd">2.3.4.3 :1000</td><th class="confluenceTh" colspan="1"><br /></th><td class="confluenceTd" colspan="1">HAS RUN SLOT</td><td class="confluenceTd" colspan="1">WAS 20% of traffic</td></tr><tr><td class="confluenceTd" colspan="1">C</td><td class="highlight-#57d9a3 confluenceTd" title="Background colour : Medium green 65%" colspan="1" data-highlight-colour="#57d9a3">1.1.1.1 :87</td><td class="highlight-#57d9a3 confluenceTd" title="Background colour : Medium green 65%" colspan="1" data-highlight-colour="#57d9a3">4.3.3.2 :622</td><td class="confluenceTd" colspan="1">2.3.2.2 :84</td><th class="confluenceTh" colspan="1"><br /></th><td class="confluenceTd" colspan="1">HAS NO RUN SLOT</td><td class="confluenceTd" colspan="1">NOW 80% of traffic, but no run slot.</td></tr></tbody></table>
 
+# How does chapter one end?
+1. We removed the conneciton throttling software from the request pipeline. This did not solve the outages but reduced the complexity of the system
+2. We worked to get our performance environment setup
+3. We stopped making random guesses about production
+
+Read on to see how things progressed. 
 
 # Links
 1. API-GW LongLivedConnections - https://forums.aws.amazon.com/thread.jspa?threadID=240690
