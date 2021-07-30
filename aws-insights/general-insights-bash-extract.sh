@@ -36,7 +36,7 @@ function isRunning ( ) {
 }
 
 function startJob () {
-   JOB_ID=$(aws logs start-query --start-time $BEGIN_EPOCH --end-time $END_EPOCH --log-group-name /prd/apps/nginx/cctsl_access.log --query-string 'fields @timestamp, @message | parse @message "* - - [*] \"* * *\" * * \"*\" \"*\" \"*\" * * * * * [*] *" as ip, time, method, uri, protocol, status, length, agent, referer, xff_ips, host, elb, request_time, response_time, pipe, request_header, request_body | parse request_header "x-amzn-trace-id: Root=*;" as trace_id | display response_time, trace_id, @timestamp, status, method, agent, uri'| jq -r '.queryId' )
+   JOB_ID=$(aws logs start-query --start-time $BEGIN_EPOCH --end-time $END_EPOCH --log-group-name /prd/apps/nginx/access.log --query-string 'fields @timestamp, @message | parse @message "* - - [*] \"* * *\" * * \"*\" \"*\" \"*\" * * * * * [*] *" as ip, time, method, uri, protocol, status, length, agent, referer, xff_ips, host, elb, request_time, response_time, pipe, request_header, request_body | parse request_header "x-amzn-trace-id: Root=*;" as trace_id | display response_time, trace_id, @timestamp, status, method, agent, uri'| jq -r '.queryId' )
    echo "$JOB_ID"
 }
 
