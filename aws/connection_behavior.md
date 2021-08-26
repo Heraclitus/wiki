@@ -77,8 +77,11 @@ API Gateway doesn't garantee that it's internal operation will consistently link
 __NOTE__ the diagram suggests that each request results in a distinct connection on it's "backend" that is a simplification for diagraming and explaining. In actual fact you may or may not get a pre-existing connection. 
 <img src="https://github.com/Heraclitus/wiki/blob/master/aws/actual.png" height="400"/>
 
-![Video Of Connection Behavior](./connection-behavior.mp4)
+The video below provides an example of the behavior. There is **no audio**. However, there is text-naration in the form of me typing in a text window while video capturing.
 
+https://user-images.githubusercontent.com/5532892/131042634-6d834cef-a6bd-4ec4-aeab-bffd5d3eacdb.mp4
+
+source video is availble here ![Video Of Connection Behavior](./connection-behavior.mp4)
 
 ## Raw Diagrams
 <details>
