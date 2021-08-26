@@ -35,7 +35,7 @@ AWS is very clear that you should expect uneven distributions if you are using l
 <img src="https://github.com/Heraclitus/wiki/blob/master/aws/aws-lb-lumpy.png" height="100"/>
 We swapped out the NLB for an ALB and had a drammatic improvement in distribution of requests per node. This had the benifit of reducing latency avg by about 10%. Our connection spikes did not change. 
 
-# So know what???
+# So now what???
 At this point in the story we have...
 1. A happier customer, no more 5xx.
 2. High AWS costs $$$ due to our attempts to out-scale the problems
