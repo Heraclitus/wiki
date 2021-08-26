@@ -81,6 +81,8 @@ __NOTE__ the diagram suggests that each request results in a distinct connection
 
 
 ## Raw Diagrams
+<details>
+ <summary>Click to see PlantUML source.</summary>
 
 ### Mistaken
 ```
@@ -176,6 +178,8 @@ JMETER <- APIGW
 @enduml
 ```
 
+</details>
+          
 ## Flaw in Connection throttling
 At root the flaw is asymetrical knowledge. On one side you have API-GW holding many TCP connections and believing they are all equally valid and useful. On the other side you have these connection throttling instances on EC2 nodes designating certain connections as **golden** connections which have priority while other connections are queued.  One side knows something the other does not. API-GW can't effectively optimize which connections it sends requests on. 
 
