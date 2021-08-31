@@ -5,7 +5,7 @@ This is the opening chapter in a saga on a multi-month problem that I was involv
 Our system is serving millions of clients on the public internet on a mixture of platforms including IPhone, Android and embedded devices. These clients call into our AWS backend architecture for serving of REST API calls. Our client trend peaks can be as high as 4,000 RPS (Requests Per Second) and trough around 1,300 RPS. Noon is high water mark and midnight is our low. 
 
 ## Problem Landscape
-We started experienceing massive failure rates (HTTP 5xx status codes). Days would go by without witnessing any significant failures and other days we'd see two or three failure events. Our typical response during an outage was to throttle traffic (causing 429 errors) until our internal request pipeline cleared out it's backlogs and then we would ease back off the throttling until we reached a steady state. These recovery actions would take 20-50 mins. Sometimes we'd have to dial the throttling back down because the system would get backed up again. We observed tremendous spikes in TCP connections and system latency would increase. Recovery throttling on the API-GW was down to as low as 50 RPS throttling. 
+We started experienceing massive failure rates (HTTP 5xx status codes). Days would go by without witnessing any significant failures and other days we'd see two or three failure events. Our typical response during an outage was to throttle traffic (causing 429 errors) until our internal request pipeline cleared out its backlogs and then we would ease back off the throttling until we reached a steady state. These recovery actions would take 20-50 mins. Sometimes we'd have to dial the throttling back down because the system would get backed up again. We observed tremendous spikes in TCP connections and system latency would increase. Recovery throttling on the API-GW was down to as low as 50 RPS throttling. 
 
 # High Level Architecture
 
@@ -33,7 +33,7 @@ An example of the spikes as viewed from the NLB looks like <img src="https://git
 # Troubleshooting process
 Typically you would start by thinking of the two ends; CloudFront & RDS.  Did we get a huge rush of customer traffic? Did we get a DB related slow down? What about third-party APIs?
 
-in 29 days we counted 
+In 29 days we counted... 
 1. **33 events** w/associated RDS MySQL spikes & NLB spikes
 1. **8 events** w/out RDS MySQL spikes & NLB spikes
 1. **0 events** w/increased CloudFrount request count
@@ -50,14 +50,14 @@ Nope, statistical analysis of our thirdparty calls didn't explain the latencies 
 
 # Why so challenging?
 1. The smallest granularity of many AWS metrics is 1 minute and that makes identifying leading indicators very difficult.
-2. Complex system that allowed for lots of competing theories amongst collueges with strong opinions. We tried hard to blame the NLB :) 
+2. Complex system that allowed for lots of competing theories amongst collueges with strong opinions. We tried hard to blame the NLB ;) 
 3. Slow pace of expiramentation. We lacked a proper performance testing environment that could simulate our expiraments.
 4. Our customers were very sensitive to change.
 5. RDS monitoring is minimal compared to what we eventually added (PMM - https://www.percona.com/software/database-tools/percona-monitoring-and-management)
 
 
 # Resolution?
-Not in this chapter. We did gane some important insights.
+Not in this chapter. We did gain some important insights.
 
 Two key learnings. One was fixing our understanding of how long lived connections were working between API-GW and our connection throttling software. The other was realizing a flaw in our approach to connection throttling upstream of the API-GW. Below I dig into each.
 
@@ -72,9 +72,9 @@ This assumption leads us to believe that the following happens...
 
 ### Actual Behavior
 
-API Gateway doesn't garantee that it's internal operation will consistently link the long-lived client connection with the same long-lived backend connection to the NLB. As a result you can see several NLB "flow" counts for a single repeating client using long-lived HTTP connections.
+API Gateway doesn't garantee that its internal operation will consistently link the long-lived client connection with the same long-lived backend connection to the NLB. As a result you can see several NLB "flow" counts for a single repeating client using long-lived HTTP connections.
 
-__NOTE__ the diagram suggests that each request results in a distinct connection on it's "backend" that is a simplification for diagraming and explaining. In actual fact you may or may not get a pre-existing connection. 
+__NOTE__ the diagram suggests that each request results in a distinct connection on its "backend" that is a simplification for diagraming and explaining. In actual fact you may or may not get a pre-existing connection. 
 <img src="https://github.com/Heraclitus/wiki/blob/master/aws/actual.png" height="400"/>
 
 The video below provides an example of the behavior. There is **no audio**. However, there is text-naration in the form of me typing in a text window while video capturing.
@@ -183,10 +183,10 @@ JMETER <- APIGW
 
 </details>
           
-## Flaw in Connection throttling
+## Flaw in Connection Throttling
 At root the flaw is asymetrical knowledge. On one side you have API-GW holding many TCP connections and believing they are all equally valid and useful. On the other side you have these connection throttling instances on EC2 nodes designating certain connections as **golden** connections which have priority while other connections are queued.  One side knows something the other does not. API-GW can't effectively optimize which connections it sends requests on. 
 
-It's important to point out that the NLB really is quite simple in it's basic construction and should be removed from our thinking about the problem.
+It's important to point out that the NLB really is quite simple in its basic construction and should be removed from our thinking about the problem.
 
 NLB is basically a hashed-ledger table to descide how to route packets
 
